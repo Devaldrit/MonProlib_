@@ -1,8 +1,25 @@
 .mainForm {
-  text-align: center;
-  color: white;
+  background-color: white;
+  color: rgb(0, 0, 0);
 }
 
 .companyDetail {
   display: block;
+  justify-content: center;
+}
+
+h1 {
+  color: black;
+}
+
+button {
+  background-color: green;
+  color: white;
+}
+
+.inputNameCompany {
+  width: 90%;
+}
+.inputAdresCompany {
+  width: 90%;
 }
