@@ -120,6 +120,15 @@ const Annonce = () => {
     setDisplayActivity(true);
   };
 
+  // Nouveaux gestionnaires pour revenir en mode modification
+  const handleModifierHoraires = () => {
+    setDisplayHoraire(false);
+  };
+
+  const handleModifierActivite = () => {
+    setDisplayActivity(false);
+  };
+
   // Rendu conditionnel pour les horaires
   const renderHoraires = () => (
     <div className="horairesAffichage">
@@ -149,6 +158,8 @@ const Annonce = () => {
         Dimanche : {dimancheStart} - {dimancheEnd} -{" "}
         {dimancheClosed ? "Fermé" : "Ouvert"}
       </p>
+      {/* Bouton pour modifier les horaires */}
+      <button onClick={handleModifierHoraires}>Modifier horaires</button>
     </div>
   );
 
@@ -159,6 +170,8 @@ const Annonce = () => {
       <p>
         {nameActivity} - {descriptionActivity} - {durationActivity}
       </p>
+      {/* Bouton pour modifier l'activité */}
+      <button onClick={handleModifierActivite}>Modifier activité</button>
     </div>
   );
 
