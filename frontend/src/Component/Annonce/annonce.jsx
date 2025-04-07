@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./annonce.css";
 
 const Annonce = () => {
   // Informations générales de l'annonce
@@ -162,25 +163,29 @@ const Annonce = () => {
   );
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="mainForm">
       <h1>Calendrier de Rendez-vous</h1>
 
-      <section>
-        <h2>Poster mon annonce</h2>
-        <label htmlFor="nameCompany">Nom de l'entreprise</label>
-        <input
-          type="text"
-          name="nameCompany"
-          value={nameCompany}
-          onChange={(e) => setNameCompany(e.target.value)}
-        />
-        <label htmlFor="adresCompany">Adresse de l'entreprise</label>
-        <input
-          type="text"
-          name="adresCompany"
-          value={adresCompany}
-          onChange={(e) => setAdresCompany(e.target.value)}
-        />
+      <section className="companyDetails">
+        <h2 className="postAnnonce">Poster mon annonce</h2>
+        <div>
+          <label htmlFor="nameCompany">Nom de l'entreprise :</label>
+          <input
+            type="text"
+            name="nameCompany"
+            value={nameCompany}
+            onChange={(e) => setNameCompany(e.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="adresCompany">Adresse de l'entreprise :</label>
+          <input
+            type="text"
+            name="adresCompany"
+            value={adresCompany}
+            onChange={(e) => setAdresCompany(e.target.value)}
+          />
+        </div>
       </section>
 
       <section>
@@ -521,29 +526,35 @@ const Annonce = () => {
         <h2>Vos activités proposées</h2>
         {!displayActivity ? (
           <div className="activityForm">
-            <label htmlFor="nameActivity">Nom de l'activité :</label>
-            <input
-              type="text"
-              name="nameActivity"
-              value={nameActivity}
-              onChange={(e) => setNameActivity(e.target.value)}
-            />
-            <label htmlFor="descriptionActivity">
-              Description de l'activité :
-            </label>
-            <input
-              type="text"
-              name="descriptionActivity"
-              value={descriptionActivity}
-              onChange={(e) => setDescriptionActivity(e.target.value)}
-            />
-            <label htmlFor="durationActivity">Durée de l'activité :</label>
-            <input
-              type="text"
-              name="durationActivity"
-              value={durationActivity}
-              onChange={(e) => setDurationActivity(e.target.value)}
-            />
+            <div>
+              <label htmlFor="nameActivity">Nom de l'activité :</label>
+              <input
+                type="text"
+                name="nameActivity"
+                value={nameActivity}
+                onChange={(e) => setNameActivity(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="descriptionActivity">
+                Description de l'activité :
+              </label>
+              <input
+                type="text"
+                name="descriptionActivity"
+                value={descriptionActivity}
+                onChange={(e) => setDescriptionActivity(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="durationActivity">Durée de l'activité :</label>
+              <input
+                type="text"
+                name="durationActivity"
+                value={durationActivity}
+                onChange={(e) => setDurationActivity(e.target.value)}
+              />
+            </div>
             <button onClick={handleEnregistrerActivite}>
               Enregistrer activité
             </button>
