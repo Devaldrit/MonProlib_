@@ -180,22 +180,26 @@ const Annonce = () => {
       <h1>Calendrier de Rendez-vous</h1>
 
       <section className="companyDetails">
-        <h2 className="postAnnonce">Poster mon annonce</h2>
+        <h2 className="postAnnonce">Poster mon annonce (entreprise)</h2>
         <div>
           <label htmlFor="nameCompany">Nom de l'entreprise :</label>
           <input
+            className="inputNameCompany"
             type="text"
             name="nameCompany"
             value={nameCompany}
+            placeholder="Nom de votre entreprise"
             onChange={(e) => setNameCompany(e.target.value)}
           />
         </div>
         <div>
           <label htmlFor="adresCompany">Adresse de l'entreprise :</label>
           <input
+            className="inputAdresCompany"
             type="text"
             name="adresCompany"
             value={adresCompany}
+            placeholder="Adresse complète"
             onChange={(e) => setAdresCompany(e.target.value)}
           />
         </div>
@@ -214,6 +218,7 @@ const Annonce = () => {
                   type="text"
                   name="lundiStart"
                   value={lundiStart}
+                  placeholder="Début"
                   onChange={(e) => setLundiStart(e.target.value)}
                 />
               </div>
@@ -223,6 +228,7 @@ const Annonce = () => {
                   type="text"
                   name="lundiEnd"
                   value={lundiEnd}
+                  placeholder="Fin"
                   onChange={(e) => setLundiEnd(e.target.value)}
                 />
               </div>
@@ -260,6 +266,7 @@ const Annonce = () => {
                   type="text"
                   name="mardiStart"
                   value={mardiStart}
+                  placeholder="Début"
                   onChange={(e) => setMardiStart(e.target.value)}
                 />
               </div>
@@ -269,6 +276,7 @@ const Annonce = () => {
                   type="text"
                   name="mardiEnd"
                   value={mardiEnd}
+                  placeholder="Fin"
                   onChange={(e) => setMardiEnd(e.target.value)}
                 />
               </div>
@@ -306,6 +314,7 @@ const Annonce = () => {
                   type="text"
                   name="mercrediStart"
                   value={mercrediStart}
+                  placeholder="Début"
                   onChange={(e) => setMercrediStart(e.target.value)}
                 />
               </div>
@@ -315,6 +324,7 @@ const Annonce = () => {
                   type="text"
                   name="mercrediEnd"
                   value={mercrediEnd}
+                  placeholder="Fin"
                   onChange={(e) => setMercrediEnd(e.target.value)}
                 />
               </div>
@@ -352,6 +362,7 @@ const Annonce = () => {
                   type="text"
                   name="jeudiStart"
                   value={jeudiStart}
+                  placeholder="Début"
                   onChange={(e) => setJeudiStart(e.target.value)}
                 />
               </div>
@@ -361,6 +372,7 @@ const Annonce = () => {
                   type="text"
                   name="jeudiEnd"
                   value={jeudiEnd}
+                  placeholder="Fin"
                   onChange={(e) => setJeudiEnd(e.target.value)}
                 />
               </div>
@@ -397,6 +409,7 @@ const Annonce = () => {
                 <input
                   type="text"
                   name="vendrediStart"
+                  placeholder="Début"
                   value={vendrediStart}
                   onChange={(e) => setVendrediStart(e.target.value)}
                 />
@@ -407,6 +420,7 @@ const Annonce = () => {
                   type="text"
                   name="vendrediEnd"
                   value={vendrediEnd}
+                  placeholder="Fin"
                   onChange={(e) => setVendrediEnd(e.target.value)}
                 />
               </div>
@@ -443,6 +457,7 @@ const Annonce = () => {
                 <input
                   type="text"
                   name="samediStart"
+                  placeholder="Début"
                   value={samediStart}
                   onChange={(e) => setSamediStart(e.target.value)}
                 />
@@ -453,6 +468,7 @@ const Annonce = () => {
                   type="text"
                   name="samediEnd"
                   value={samediEnd}
+                  placeholder="Fin"
                   onChange={(e) => setSamediEnd(e.target.value)}
                 />
               </div>
@@ -474,6 +490,7 @@ const Annonce = () => {
                     name="samediStatus"
                     value="closed"
                     checked={samediClosed}
+                    placeholder="Fin"
                     onChange={() => setSamediClosed(true)}
                   />
                   Fermé
@@ -489,6 +506,7 @@ const Annonce = () => {
                 <input
                   type="text"
                   name="dimancheStart"
+                  placeholder="Début"
                   value={dimancheStart}
                   onChange={(e) => setDimancheStart(e.target.value)}
                 />
@@ -499,6 +517,7 @@ const Annonce = () => {
                   type="text"
                   name="dimancheEnd"
                   value={dimancheEnd}
+                  placeholder="Fin"
                   onChange={(e) => setDimancheEnd(e.target.value)}
                 />
               </div>
@@ -545,6 +564,7 @@ const Annonce = () => {
                 type="text"
                 name="nameActivity"
                 value={nameActivity}
+                placeholder="Nom de l'activité"
                 onChange={(e) => setNameActivity(e.target.value)}
               />
             </div>
@@ -556,6 +576,7 @@ const Annonce = () => {
                 type="text"
                 name="descriptionActivity"
                 value={descriptionActivity}
+                placeholder="Description de l'activité"
                 onChange={(e) => setDescriptionActivity(e.target.value)}
               />
             </div>
@@ -565,6 +586,7 @@ const Annonce = () => {
                 type="text"
                 name="durationActivity"
                 value={durationActivity}
+                placeholder="Durée de l'activité"
                 onChange={(e) => setDurationActivity(e.target.value)}
               />
             </div>
@@ -577,7 +599,9 @@ const Annonce = () => {
         )}
       </section>
 
-      <button type="submit">Poster mon annonce</button>
+      <button type="submit" className="sendDataForm">
+        Poster mon annonce
+      </button>
     </form>
   );
 };
