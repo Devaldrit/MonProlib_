@@ -1,0 +1,21 @@
+.activityCard {
+  border-radius: 0.4rem;
+  border: solid black 1px;
+  margin: 2px;
+  background-color: grey;
+  width: 600px;
+  display: flex;
+}
+.mainTitle {
+  color: black;
+}
+
+input {
+  height: 2rem;
+  border-radius: 0.4rem;
+  margin: 0.3rem;
+}
+
+.delete {
+  background-color: red;
+}
