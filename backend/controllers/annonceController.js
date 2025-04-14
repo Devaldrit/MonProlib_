@@ -24,25 +24,27 @@ exports.getAllActivities = async (req, res) => {
 };
 
 exports.deleteActivity = async (req, res) => {
-  const { annonceId, activityId } = req.params; // Utilisation des paramètres définis dans la route
+  const { activityId } = req.params; // on récupère uniquement l'id de l'activité
 
   try {
-    // Récupérer l'annonce par son ID
-    const annonce = await Annonce.findById(annonceId);
+    // Recherche de l'annonce contenant l'activité via la propriété "activities._id"
+    const annonce = await Annonce.findOne({ "activities._id": activityId });
     if (!annonce) {
-      return res.status(404).json({ message: "Annonce non trouvée." });
+      return res
+        .status(404)
+        .json({ message: "Aucune annonce ne contient cette activité." });
     }
 
-    // Récupérer le sous-document activité
+    // Récupération du sous-document correspondant dans le tableau des activités
     const activity = annonce.activities.id(activityId);
     if (!activity) {
       return res.status(404).json({ message: "Activité non trouvée." });
     }
 
-    // Utiliser deleteOne sur le sous-document
+    // Suppression du sous-document avec la méthode deleteOne (disponible sur les sub-documents)
     await activity.deleteOne();
 
-    // Sauvegarder le document parent
+    // Sauvegarder le document parent pour appliquer la suppression
     await annonce.save();
 
     res.status(200).json({ message: "Activité supprimée avec succès." });

@@ -14,5 +14,5 @@ router.get("/", GetAnnonces);
 
 router.get("/activities", getAllActivities);
 
-router.delete("/:annonceId/activity/:activityId", deleteActivity);
+router.delete("/activity/:activityId", deleteActivity);
 module.exports = router;
