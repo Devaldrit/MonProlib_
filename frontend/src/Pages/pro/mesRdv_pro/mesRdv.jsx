@@ -1,7 +1,15 @@
 import ActiviteCard from "../../../Component/ActiviteCard/ActiviteCard";
 import HeaderConnexion from "../../../Component/header_connexion/headerConnexion";
 import "./mesRdv.css";
+import { useState, useEffect } from "react";
+
 const MesRdv = () => {
+  const [inputTitleActivity, setInputTitleActivity] = useState("");
+  const [inputDescriptionActivity, setInputDescriptionActivity] = useState("");
+  const [inputDurationActivity, setInputDurationActivity] = useState("");
+
+  const [filteredActivites, setFilteredActivites] = useState([]);
+
   const activites = [
     {
       id: 1,
@@ -72,12 +80,35 @@ const MesRdv = () => {
     },
   ];
 
-  console.log(activites);
+  useEffect(() => {
+    const results = activites.filter((activite) => {
+      const matchTitle = inputTitleActivity
+        ? activite.titre
+            .toLowerCase()
+            .includes(inputTitleActivity.toLowerCase())
+        : true;
+      const matchDescription = inputDescriptionActivity
+        ? activite.description
+            .toLowerCase()
+            .includes(inputDescriptionActivity.toLowerCase())
+        : true;
+      const matchDuration = inputDurationActivity
+        ? activite.duree
+            .toLowerCase()
+            .includes(inputDurationActivity.toLowerCase())
+        : true;
+      return matchTitle && matchDescription && matchDuration;
+    });
+    setFilteredActivites(results);
+  }, [inputTitleActivity, inputDescriptionActivity, inputDurationActivity]);
 
-  const activiteElements = activites.map((activiteInfo) => (
-    <div class="activityCard">
+  const activiteElements = (
+    inputTitleActivity || inputDescriptionActivity || inputDurationActivity
+      ? filteredActivites
+      : activites
+  ).map((activiteInfo) => (
+    <div key={activiteInfo.id} className="activityCard">
       <ActiviteCard
-        key={activiteInfo.id}
         titre={activiteInfo.titre}
         description={activiteInfo.description}
         duree={activiteInfo.duree}
@@ -91,11 +122,23 @@ const MesRdv = () => {
   return (
     <section>
       <HeaderConnexion />
-      <h1 className="mainTitle">Gestion des activites</h1>
+      <h1 className="mainTitle">Gestion des activités</h1>
       <div>
-        <input placeholder="Titre de l'activité"></input>
-        <input placeholder="Description (optionnel)"></input>
-        <input placeholder="Durée (ex: 30 min}"></input>
+        <input
+          placeholder="Titre de l'activité"
+          value={inputTitleActivity}
+          onChange={(e) => setInputTitleActivity(e.target.value)}
+        />
+        <input
+          placeholder="Description (optionnel)"
+          value={inputDescriptionActivity}
+          onChange={(e) => setInputDescriptionActivity(e.target.value)}
+        />
+        <input
+          placeholder="Durée (ex: 30 min)"
+          value={inputDurationActivity}
+          onChange={(e) => setInputDurationActivity(e.target.value)}
+        />
       </div>
       <div>{activiteElements}</div>
     </section>
