@@ -44,17 +44,22 @@ input {
   width: 30%;
 }
 
-.titleAnnonce
-{
+.titleAnnonce {
   color: white;
 }
 
-.nameCompany
-{
+.nameCompany {
   color: white;
 }
 
-.titleEntreprise
-{
+.titleEntreprise {
   color: black;
+}
+
+.cardActivity {
+  display: flex;
+}
+
+.activiteExistante {
+  color: white;
 }

@@ -1,0 +1,9 @@
+.activityCard {
+  background-color: rgb(32, 118, 171);
+  margin: 5px;
+  padding: 5px;
+  border-radius: 10px;
+  border: solid red;
+  width: 250px;
+  text-align: center;
+}
