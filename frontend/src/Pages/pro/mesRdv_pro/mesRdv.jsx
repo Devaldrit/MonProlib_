@@ -11,21 +11,6 @@ const MesRdv = () => {
   const [activites, setActivites] = useState([]);
   const [filteredActivites, setFilteredActivites] = useState([]);
 
-  // Fonction qui calcule la durée à partir de start et end
-  const computeDuration = (start, end) => {
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-    const diffInMs = endDate - startDate;
-    const diffInMinutes = Math.floor(diffInMs / 60000);
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes} min`;
-    } else {
-      const hours = Math.floor(diffInMinutes / 60);
-      const minutes = diffInMinutes % 60;
-      return `${hours} h ${minutes} min`;
-    }
-  };
-
   // Récupération des activités depuis l'API au montage du composant
   useEffect(() => {
     fetch("http://localhost:3000/api/slotsCalendar")
@@ -36,21 +21,16 @@ const MesRdv = () => {
         return response.json();
       })
       .then((data) => {
-        // Calcul de la durée pour chaque activité et ajout de la propriété 'duree'
-        const activitesAvecDuree = data.map((item) => ({
-          ...item,
-          duree: computeDuration(item.start, item.end),
-        }));
-        setActivites(activitesAvecDuree);
-        setFilteredActivites(activitesAvecDuree);
-        console.log(activitesAvecDuree);
+        setActivites(data);
+        setFilteredActivites(data);
+        console.log(data);
       })
       .catch((error) => {
         console.error("Erreur fetch :", error);
       });
   }, []);
 
-  // Filtrage des activités selon les saisies de l'utilisateur
+  // Filtrage des activités en fonction des inputs de l'utilisateur
   useEffect(() => {
     const results = activites.filter((activite) => {
       const matchTitle = inputTitleActivity
@@ -63,22 +43,13 @@ const MesRdv = () => {
             .toLowerCase()
             .includes(inputDescriptionActivity.toLowerCase())
         : true;
-      const matchDuration = inputDurationActivity
-        ? activite.duree
-            .toLowerCase()
-            .includes(inputDurationActivity.toLowerCase())
-        : true;
-      return matchTitle && matchDescription && matchDuration;
+      const matchDuration = inputDurationActivity;
+      return matchTitle && matchDescription;
     });
     setFilteredActivites(results);
-  }, [
-    inputTitleActivity,
-    inputDescriptionActivity,
-    inputDurationActivity,
-    activites,
-  ]);
+  }, [inputTitleActivity, inputDescriptionActivity, activites]);
 
-  // Fonction pour supprimer une activité via un appel DELETE à l'API
+  // Fonction pour supprimer une activité via un appel DELETE vers l'API
   const handleDelete = (id) => {
     fetch(`http://localhost:3000/api/slotsCalendar/${id}`, {
       method: "DELETE",
@@ -87,7 +58,7 @@ const MesRdv = () => {
         if (!response.ok) {
           throw new Error("Erreur lors de la suppression de l'activité");
         }
-        // Mise à jour du tableau en retirant l'activité supprimée
+        // Mise à jour de l'état local en retirant l’élément supprimé
         const updatedActivites = activites.filter(
           (activite) => activite._id !== id
         );
@@ -99,17 +70,15 @@ const MesRdv = () => {
       );
   };
 
-  // Affichage conditionnel selon la présence d'un input de recherche
   const activiteElements = (
-    inputTitleActivity || inputDescriptionActivity || inputDurationActivity
+    inputTitleActivity || inputDescriptionActivity
       ? filteredActivites
       : activites
   ).map((activiteInfo) => (
     <div key={activiteInfo._id} className="activityCard">
       <ActiviteCard
-        titre={activiteInfo.titre}
+        titre={activiteInfo.title}
         description={activiteInfo.description}
-        duree={activiteInfo.duree}
       />
       <div>
         <button
@@ -136,11 +105,6 @@ const MesRdv = () => {
           placeholder="Description (optionnel)"
           value={inputDescriptionActivity}
           onChange={(e) => setInputDescriptionActivity(e.target.value)}
-        />
-        <input
-          placeholder="Durée (ex: 30 min)"
-          value={inputDurationActivity}
-          onChange={(e) => setInputDurationActivity(e.target.value)}
         />
       </div>
       <div>{activiteElements}</div>
