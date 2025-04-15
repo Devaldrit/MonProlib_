@@ -102,3 +102,8 @@ span {
   color: #000;
   padding: 2px;
 }
+
+.spanCalendar {
+  padding: 2px;
+  font-size: 10px;
+}
