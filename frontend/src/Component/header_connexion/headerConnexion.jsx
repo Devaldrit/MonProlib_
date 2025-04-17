@@ -90,7 +90,7 @@ function HeaderConnexion() {
                   navigate("/annonce_pro");
                 }}
               >
-               Mes Annonces
+                Mes Annonces
               </div>
               <div
                 className="dropdown_item"
@@ -104,7 +104,15 @@ function HeaderConnexion() {
               <div className="dropdown_item">Mes Rendez-Vous</div>
             </>
           ) : null}
-          <div className="dropdown_item">Paramètre</div>
+          <div
+            className="dropdown_item"
+            onClick={() => {
+              setMenuOpen(false);
+              navigate("/settings_pro");
+            }}
+          >
+            Paramètre
+          </div>
           <div className="dropdown_item_deconnexion" onClick={handleLogout}>
             Déconnexion
           </div>
