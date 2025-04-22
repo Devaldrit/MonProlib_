@@ -34,7 +34,7 @@ const MesRdv = () => {
   useEffect(() => {
     const results = activites.filter((activite) => {
       const matchTitle = inputTitleActivity
-        ? activite.titre
+        ? activite.title
             .toLowerCase()
             .includes(inputTitleActivity.toLowerCase())
         : true;
