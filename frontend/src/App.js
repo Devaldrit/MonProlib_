@@ -1,7 +1,7 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Home from "./Pages/home/home";
+import Home from "./Pages/Home/home.jsx";
 import HomePro from "./Pages/pro/home_pro/homePro.jsx";
 import RegisterPro from "./Pages/pro/register_pro/registerPro";
 import RegisterUser from "./Pages/user/register_user/registerUser.jsx";
@@ -10,6 +10,7 @@ import WelcomePro from "./Pages/pro/welcome_pro/welcomePro.jsx";
 import WelcomeUser from "./Pages/user/welcome_user/welcomeUser.jsx";
 import CalendarPro from "./Pages/pro/calendar_pro/calendarPro";
 import AnnoncePro from "./Pages/pro/annonce_pro/annoncePro.jsx";
+import Settings from "./Pages/pro/Settings_pro/Settings.jsx";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/Login" element={<Login />} />
         <Route path="/welcome_pro/:id" element={<WelcomePro />} />
         <Route path="/welcome_user/:id" element={<WelcomeUser />} />
+        <Route path="/settings_pro" element={<Settings />} />
       </Routes>
     </Router>
   );
