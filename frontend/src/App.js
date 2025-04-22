@@ -25,7 +25,7 @@ function App() {
         <Route path="/Login" element={<Login />} />
         <Route path="/welcome_pro/:id" element={<WelcomePro />} />
         <Route path="/welcome_user/:id" element={<WelcomeUser />} />
-        <Route path="/settings_pro" element={<Settings />} />
+        <Route path="/settings_pro/:id" element={<Settings />} />
       </Routes>
     </Router>
   );

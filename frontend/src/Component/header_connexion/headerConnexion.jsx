@@ -108,7 +108,7 @@ function HeaderConnexion() {
             className="dropdown_item"
             onClick={() => {
               setMenuOpen(false);
-              navigate("/settings_pro");
+              navigate("/settings_pro/:id");
             }}
           >
             Paramètre

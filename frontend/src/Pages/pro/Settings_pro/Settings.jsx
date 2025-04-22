@@ -8,6 +8,62 @@ const Settings = () => {
   const [editEmail, setEditEmail] = useState(false);
   const [editPassword, setEditPassword] = useState(false);
 
+  const handleEmailSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const id = localStorage.getItem("userId");
+      const url = `http://localhost:3000/api/users/${id}/email`;
+
+      const res = await fetch(url, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      console.log("Requesting:", url);
+      const data = await res.json();
+      console.log("Email updated:", data);
+      setEditEmail(false);
+    } catch (err) {
+      console.error("Error updating email:", err);
+    }
+  };
+
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const id = localStorage.getItem("userId");
+      const url = `http://localhost:3000/api/users/${id}/password`;
+
+      const res = await fetch(url, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const data = await res.json();
+      console.log("Password updated:", data);
+      setEditPassword(false);
+    } catch (err) {
+      console.error("Error updating password:", err);
+    }
+  };
+
+  const handleDeleteAccount = async (e) => {
+    e.preventDefault();
+    try {
+      const id = localStorage.getItem("userId");
+      const url = `http://localhost:3000/api/users/${id}`;
+
+      const res = await fetch(url, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      console.log("Account deleted:", data);
+    } catch (err) {
+      console.error("Error deleting account:", err);
+    }
+  };
+
   return (
     <div>
       <HeaderConnexion />
@@ -15,7 +71,7 @@ const Settings = () => {
         <h2 className="settings-title">Account Settings</h2>
 
         {/* Email Section */}
-        <div className="settings-section">
+        <form className="settings-section" onSubmit={handleEmailSubmit}>
           <label className="input-label">Email</label>
           <div className="input-wrapper">
             <input
@@ -29,17 +85,25 @@ const Settings = () => {
             <div className="icon-container">
               <iconify-icon icon="ic:outline-mail" width="16" height="16" />
             </div>
+            {!editEmail && (
+              <button
+                className="btn btn-edit-toggle"
+                type="button"
+                onClick={() => setEditEmail(true)}
+              >
+                ✎
+              </button>
+            )}
           </div>
-          <button
-            className="btn btn-primary"
-            onClick={() => setEditEmail(!editEmail)}
-          >
-            {editEmail ? "Save Email" : "Edit Email"}
-          </button>
-        </div>
+          {editEmail && (
+            <button className="btn btn-primary" type="submit">
+              Save Email
+            </button>
+          )}
+        </form>
 
         {/* Password Section */}
-        <div className="settings-section">
+        <form className="settings-section" onSubmit={handlePasswordSubmit}>
           <label className="input-label">Password</label>
           <div className="input-wrapper">
             <input
@@ -53,25 +117,33 @@ const Settings = () => {
             <div className="icon-container">
               <iconify-icon icon="ic:outline-lock" width="16" height="16" />
             </div>
+            {!editPassword && (
+              <button
+                className="btn btn-edit-toggle"
+                type="button"
+                onClick={() => setEditPassword(true)}
+              >
+                ✎
+              </button>
+            )}
           </div>
-          <button
-            className="btn btn-primary"
-            onClick={() => setEditPassword(!editPassword)}
-          >
-            {editPassword ? "Save Password" : "Edit Password"}
-          </button>
-        </div>
+          {editPassword && (
+            <button className="btn btn-primary" type="submit">
+              Save Password
+            </button>
+          )}
+        </form>
 
         {/* Danger Zone Section */}
-        <div className="settings-section danger-zone">
+        <form
+          className="settings-section danger-zone"
+          onSubmit={handleDeleteAccount}
+        >
           <h3 className="section-title danger-title">Danger Zone</h3>
-          <button
-            className="btn btn-danger"
-            onClick={() => alert("Account deleted (not really).")}
-          >
+          <button className="btn btn-danger" type="submit">
             Delete Account
           </button>
-        </div>
+        </form>
       </section>
     </div>
   );

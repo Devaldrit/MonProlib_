@@ -76,10 +76,24 @@
 
 .danger-zone {
   background-color: #3778c4;
-  padding: 20px;
 }
 
 .danger-title {
   color: rgb(255, 255, 255);
   font-size: 20px;
+}
+
+.btn-edit-toggle {
+  background: none;
+  border: none;
+  color: #ffffff;
+  margin-left: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
