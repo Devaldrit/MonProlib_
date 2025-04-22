@@ -171,19 +171,23 @@ const updatePasswordUser = async (req, res) => {
     if (!password) {
       return res
         .status(400)
-        .json({ message: "password manquant dans la requête." });
+        .json({ message: "Mot de passe manquant dans la requête." });
     }
+
+    // Hachage du mot de passe
+    const hashedPassword = await bcrypt.hash(password, 10); // le 10 correspond au "salt rounds"
+
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { password: password },
-      { new: true } // pour renvoyer le user mis à jour
+      { password: hashedPassword },
+      { new: true }
     );
 
     if (!updatedUser) {
       return res.status(404).json({ message: "Utilisateur non trouvé." });
     }
 
-    res.json(updatedUser);
+    res.json({ message: "Mot de passe mis à jour avec succès." });
   } catch (error) {
     console.error("Erreur lors de la mise à jour du mot de passe :", error);
     res.status(500).json({ message: "Erreur serveur." });
