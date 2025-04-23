@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./annonce.css";
+import ActiviteCard from "../ActiviteCard/ActiviteCard.jsx";
 
 const Annonce = () => {
   // Informations générales de l'annonce
@@ -54,6 +55,8 @@ const Annonce = () => {
   const [editingDescription, setEditingDescription] = useState("");
   const [editingDuration, setEditingDuration] = useState("");
 
+  const [annonces, setAnnonces] = useState([]);
+
   // Génération des options pour les horaires (de 06:00 à 22:00)
   const hourOptions = [];
   for (let hour = 6; hour <= 22; hour++) {
@@ -100,7 +103,7 @@ const Annonce = () => {
               closed: dimancheClosed,
             },
           },
-          activities: activitiesList, // Envoi de toutes les activités ajoutées
+          activities: activitiesList,
         }),
       });
       if (response.ok) {
@@ -123,7 +126,6 @@ const Annonce = () => {
       duration: newActivityDuration,
     };
     setActivitiesList([...activitiesList, newActivity]);
-    // Réinitialiser les champs et masquer le formulaire
     setNewActivityName("");
     setNewActivityDescription("");
     setNewActivityDuration("");
@@ -239,439 +241,528 @@ const Annonce = () => {
     </div>
   );
 
+  useEffect(() => {
+    // Fonction asynchrone pour récupérer les données depuis l'API
+    const fetchActivities = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/api/annonces/activities"
+        );
+        if (!response.ok) {
+          throw new Error("Erreur lors de la récupération des données");
+        }
+        const data = await response.json();
+        setAnnonces(data);
+        console.log(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchActivities();
+  }, []);
+
+  // Affichage des activités existantes récupérées depuis l'API
+  const renderExistingActivities = () => (
+    <div className="existingActivities">
+      <h2 className="activiteExistante">Vos activites existantes</h2>
+      {annonces.map((annonce) => (
+        <div
+          key={annonce._id}
+          id={`annonce-${annonce._id}`}
+          className="annonceActivity"
+        >
+          {annonce.activities && annonce.activities.length > 0
+            ? annonce.activities.map((activity) => (
+                <div
+                  className="cardActivity"
+                  key={activity._id}
+                  id={`activity-${activity._id}`}
+                >
+                  <ActiviteCard
+                    name={activity.name}
+                    key={activity._id}
+                    id={`activity-${activity._id}`}
+                  />
+                  <button onClick={() => handleClick(activity._id)}>
+                    Supprimer
+                  </button>
+                </div>
+              ))
+            : null}
+        </div>
+      ))}
+    </div>
+  );
+
+  // Fonction handleClick complète pour appeler l'API en méthode DELETE
+  const handleClick = async (activityId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/annonces/activity/${activityId}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (response.ok) {
+        console.log("Activité supprimée avec succès");
+        // Optionnel : mettre à jour l'état pour retirer l'activité supprimée des données affichées
+        setAnnonces((prevAnnonces) =>
+          prevAnnonces.map((annonce) => ({
+            ...annonce,
+            activities: annonce.activities.filter(
+              (activity) => activity._id !== activityId
+            ),
+          }))
+        );
+      } else {
+        console.error("Erreur lors de la suppression de l'activité");
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'appel API DELETE:", error);
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="mainForm">
-      <h1>Calendrier de Rendez-vous</h1>
+    <section className="mainForm">
+      <form onSubmit={handleSubmit}>
+        <h1>Calendrier de Rendez-vous</h1>
 
-      <section className="companyDetails">
-        <h2 className="titleAnnonce">Poster mon annonce (entreprise)</h2>
-        <div>
-          <label htmlFor="nameCompany" className="titleEntreprise">Nom de l'entreprise :</label>
-          <input
-            className="inputNameCompany"
-            type="text"
-            name="nameCompany"
-            value={nameCompany}
-            placeholder="Nom de votre entreprise"
-            onChange={(e) => setNameCompany(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="titleAnnonce" className="titleEntreprise">Adresse de l'entreprise :</label>
-          <input
-            className="inputAdresCompany"
-            type="text"
-            name="adresCompany"
-            value={adresCompany}
-            placeholder="Adresse complète"
-            onChange={(e) => setAdresCompany(e.target.value)}
-          />
-        </div>
-      </section>
-
-      <section>
-        <h2 className="titleAnnonce">Vos horaires de travail</h2>
-        {!displayHoraire ? (
-          <div className="horairesForm">
-            {/* Lundi */}
-            <div className="dayRow">
-              <h3>Lundi</h3>
-              <div>
-                <label htmlFor="lundiStart">Début :</label>
-                <select
-                  name="lundiStart"
-                  value={lundiStart}
-                  onChange={(e) => setLundiStart(e.target.value)}
-                >
-                  {hourOptions}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="lundiEnd">Fin :</label>
-                <select
-                  name="lundiEnd"
-                  value={lundiEnd}
-                  onChange={(e) => setLundiEnd(e.target.value)}
-                >
-                  {hourOptions}
-                </select>
-              </div>
-              <div>
-                <label>Status :</label>
-                <label>
-                  <input
-                    type="radio"
-                    name="lundiStatus"
-                    value="open"
-                    checked={!lundiClosed}
-                    onChange={() => setLundiClosed(false)}
-                  />
-                  Ouvert
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="lundiStatus"
-                    value="closed"
-                    checked={lundiClosed}
-                    onChange={() => setLundiClosed(true)}
-                  />
-                  Fermé
-                </label>
-              </div>
-            </div>
-            {/* Mardi */}
-            <div className="dayRow">
-              <h3>Mardi</h3>
-              <div>
-                <label htmlFor="mardiStart">Début :</label>
-                <select
-                  name="mardiStart"
-                  value={mardiStart}
-                  onChange={(e) => setMardiStart(e.target.value)}
-                >
-                  {hourOptions}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="mardiEnd">Fin :</label>
-                <select
-                  name="mardiEnd"
-                  value={mardiEnd}
-                  onChange={(e) => setMardiEnd(e.target.value)}
-                >
-                  {hourOptions}
-                </select>
-              </div>
-              <div>
-                <label>Status :</label>
-                <label>
-                  <input
-                    type="radio"
-                    name="mardiStatus"
-                    value="open"
-                    checked={!mardiClosed}
-                    onChange={() => setMardiClosed(false)}
-                  />
-                  Ouvert
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="mardiStatus"
-                    value="closed"
-                    checked={mardiClosed}
-                    onChange={() => setMardiClosed(true)}
-                  />
-                  Fermé
-                </label>
-              </div>
-            </div>
-            {/* Mercredi */}
-            <div className="dayRow">
-              <h3>Mercredi</h3>
-              <div>
-                <label htmlFor="mercrediStart">Début :</label>
-                <select
-                  name="mercrediStart"
-                  value={mercrediStart}
-                  onChange={(e) => setMercrediStart(e.target.value)}
-                >
-                  {hourOptions}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="mercrediEnd">Fin :</label>
-                <select
-                  name="mercrediEnd"
-                  value={mercrediEnd}
-                  onChange={(e) => setMercrediEnd(e.target.value)}
-                >
-                  {hourOptions}
-                </select>
-              </div>
-              <div>
-                <label>Status :</label>
-                <label>
-                  <input
-                    type="radio"
-                    name="mercrediStatus"
-                    value="open"
-                    checked={!mercrediClosed}
-                    onChange={() => setMercrediClosed(false)}
-                  />
-                  Ouvert
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="mercrediStatus"
-                    value="closed"
-                    checked={mercrediClosed}
-                    onChange={() => setMercrediClosed(true)}
-                  />
-                  Fermé
-                </label>
-              </div>
-            </div>
-            {/* Jeudi */}
-            <div className="dayRow">
-              <h3>Jeudi</h3>
-              <div>
-                <label htmlFor="jeudiStart">Début :</label>
-                <select
-                  name="jeudiStart"
-                  value={jeudiStart}
-                  onChange={(e) => setJeudiStart(e.target.value)}
-                >
-                  {hourOptions}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="jeudiEnd">Fin :</label>
-                <select
-                  name="jeudiEnd"
-                  value={jeudiEnd}
-                  onChange={(e) => setJeudiEnd(e.target.value)}
-                >
-                  {hourOptions}
-                </select>
-              </div>
-              <div>
-                <label>Status :</label>
-                <label>
-                  <input
-                    type="radio"
-                    name="jeudiStatus"
-                    value="open"
-                    checked={!jeudiClosed}
-                    onChange={() => setJeudiClosed(false)}
-                  />
-                  Ouvert
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="jeudiStatus"
-                    value="closed"
-                    checked={jeudiClosed}
-                    onChange={() => setJeudiClosed(true)}
-                  />
-                  Fermé
-                </label>
-              </div>
-            </div>
-            {/* Vendredi */}
-            <div className="dayRow">
-              <h3>Vendredi</h3>
-              <div>
-                <label htmlFor="vendrediStart">Début :</label>
-                <select
-                  name="vendrediStart"
-                  value={vendrediStart}
-                  onChange={(e) => setVendrediStart(e.target.value)}
-                >
-                  {hourOptions}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="vendrediEnd">Fin :</label>
-                <select
-                  name="vendrediEnd"
-                  value={vendrediEnd}
-                  onChange={(e) => setVendrediEnd(e.target.value)}
-                >
-                  {hourOptions}
-                </select>
-              </div>
-              <div>
-                <label>Status :</label>
-                <label>
-                  <input
-                    type="radio"
-                    name="vendrediStatus"
-                    value="open"
-                    checked={!vendrediClosed}
-                    onChange={() => setVendrediClosed(false)}
-                  />
-                  Ouvert
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="vendrediStatus"
-                    value="closed"
-                    checked={vendrediClosed}
-                    onChange={() => setVendrediClosed(true)}
-                  />
-                  Fermé
-                </label>
-              </div>
-            </div>
-            {/* Samedi */}
-            <div className="dayRow">
-              <h3>Samedi</h3>
-              <div>
-                <label htmlFor="samediStart">Début :</label>
-                <select
-                  name="samediStart"
-                  value={samediStart}
-                  onChange={(e) => setSamediStart(e.target.value)}
-                >
-                  {hourOptions}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="samediEnd">Fin :</label>
-                <select
-                  name="samediEnd"
-                  value={samediEnd}
-                  onChange={(e) => setSamediEnd(e.target.value)}
-                >
-                  {hourOptions}
-                </select>
-              </div>
-              <div>
-                <label>Status :</label>
-                <label>
-                  <input
-                    type="radio"
-                    name="samediStatus"
-                    value="open"
-                    checked={!samediClosed}
-                    onChange={() => setSamediClosed(false)}
-                  />
-                  Ouvert
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="samediStatus"
-                    value="closed"
-                    checked={samediClosed}
-                    onChange={() => setSamediClosed(true)}
-                  />
-                  Fermé
-                </label>
-              </div>
-            </div>
-            {/* Dimanche */}
-            <div className="dayRow">
-              <h3>Dimanche</h3>
-              <div>
-                <label htmlFor="dimancheStart">Début :</label>
-                <select
-                  name="dimancheStart"
-                  value={dimancheStart}
-                  onChange={(e) => setDimancheStart(e.target.value)}
-                >
-                  {hourOptions}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="dimancheEnd">Fin :</label>
-                <select
-                  name="dimancheEnd"
-                  value={dimancheEnd}
-                  onChange={(e) => setDimancheEnd(e.target.value)}
-                >
-                  {hourOptions}
-                </select>
-              </div>
-              <div>
-                <label>Status :</label>
-                <label>
-                  <input
-                    type="radio"
-                    name="dimancheStatus"
-                    value="open"
-                    checked={!dimancheClosed}
-                    onChange={() => setDimancheClosed(false)}
-                  />
-                  Ouvert
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="dimancheStatus"
-                    value="closed"
-                    checked={dimancheClosed}
-                    onChange={() => setDimancheClosed(true)}
-                  />
-                  Fermé
-                </label>
-              </div>
-            </div>
-            <button type="button" onClick={handleEnregistrerHoraires}>
-              Enregistrer horaires de travail
-            </button>
+        <section className="companyDetails">
+          <h2 className="titleAnnonce">Poster mon annonce (entreprise)</h2>
+          <div>
+            <label htmlFor="nameCompany" className="titleEntreprise">
+              Nom de l'entreprise :
+            </label>
+            <input
+              className="inputNameCompany"
+              type="text"
+              name="nameCompany"
+              value={nameCompany}
+              placeholder="Nom de votre entreprise"
+              onChange={(e) => setNameCompany(e.target.value)}
+            />
           </div>
-        ) : (
-          renderHoraires()
-        )}
-      </section>
-
-      <section>
-        <h2 className="titleAnnonce">Ajouter une activité</h2>
-        <button type="button" onClick={() => setDisplayAddActivity(true)}>
-          Ajouter une activité
-        </button>
-        {displayAddActivity && newAddActivityForm()}
-      </section>
-
-      {/* Affichage dynamique de toutes les activités enregistrées avec possibilité de modification */}
-      {activitiesList.length > 0 && (
-        <section className="allActivities">
-          <h2>Toutes les activités enregistrées</h2>
-          {activitiesList.map((activity, index) => (
-            <div key={index} className="activityItem">
-              {editingIndex === index ? (
-                <div>
-                  <input
-                    type="text"
-                    value={editingName}
-                    onChange={(e) => setEditingName(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    value={editingDescription}
-                    onChange={(e) => setEditingDescription(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    value={editingDuration}
-                    onChange={(e) => setEditingDuration(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleSaveEditing(index)}
-                  >
-                    Enregistrer
-                  </button>
-                </div>
-              ) : (
-                <div>
-                  <p>
-                    {activity.name} - {activity.description} -{" "}
-                    {activity.duration}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => handleStartEditing(index)}
-                  >
-                    Modifier
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+          <div>
+            <label htmlFor="titleAnnonce" className="titleEntreprise">
+              Adresse de l'entreprise :
+            </label>
+            <input
+              className="inputAdresCompany"
+              type="text"
+              name="adresCompany"
+              value={adresCompany}
+              placeholder="Adresse complète"
+              onChange={(e) => setAdresCompany(e.target.value)}
+            />
+          </div>
         </section>
-      )}
 
-      <button type="submit" className="sendDataForm">
-        Poster mon annonce
-      </button>
-    </form>
+        <section>
+          <h2 className="titleAnnonce">Vos horaires de travail</h2>
+          {!displayHoraire ? (
+            <div className="horairesForm">
+              {/* Lundi */}
+              <div className="dayRow">
+                <h3>Lundi</h3>
+                <div>
+                  <label htmlFor="lundiStart">Début :</label>
+                  <select
+                    name="lundiStart"
+                    value={lundiStart}
+                    onChange={(e) => setLundiStart(e.target.value)}
+                  >
+                    {hourOptions}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="lundiEnd">Fin :</label>
+                  <select
+                    name="lundiEnd"
+                    value={lundiEnd}
+                    onChange={(e) => setLundiEnd(e.target.value)}
+                  >
+                    {hourOptions}
+                  </select>
+                </div>
+                <div>
+                  <label>Status :</label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="lundiStatus"
+                      value="open"
+                      checked={!lundiClosed}
+                      onChange={() => setLundiClosed(false)}
+                    />
+                    Ouvert
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="lundiStatus"
+                      value="closed"
+                      checked={lundiClosed}
+                      onChange={() => setLundiClosed(true)}
+                    />
+                    Fermé
+                  </label>
+                </div>
+              </div>
+              {/* Mardi */}
+              <div className="dayRow">
+                <h3>Mardi</h3>
+                <div>
+                  <label htmlFor="mardiStart">Début :</label>
+                  <select
+                    name="mardiStart"
+                    value={mardiStart}
+                    onChange={(e) => setMardiStart(e.target.value)}
+                  >
+                    {hourOptions}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="mardiEnd">Fin :</label>
+                  <select
+                    name="mardiEnd"
+                    value={mardiEnd}
+                    onChange={(e) => setMardiEnd(e.target.value)}
+                  >
+                    {hourOptions}
+                  </select>
+                </div>
+                <div>
+                  <label>Status :</label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="mardiStatus"
+                      value="open"
+                      checked={!mardiClosed}
+                      onChange={() => setMardiClosed(false)}
+                    />
+                    Ouvert
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="mardiStatus"
+                      value="closed"
+                      checked={mardiClosed}
+                      onChange={() => setMardiClosed(true)}
+                    />
+                    Fermé
+                  </label>
+                </div>
+              </div>
+              {/* Mercredi */}
+              <div className="dayRow">
+                <h3>Mercredi</h3>
+                <div>
+                  <label htmlFor="mercrediStart">Début :</label>
+                  <select
+                    name="mercrediStart"
+                    value={mercrediStart}
+                    onChange={(e) => setMercrediStart(e.target.value)}
+                  >
+                    {hourOptions}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="mercrediEnd">Fin :</label>
+                  <select
+                    name="mercrediEnd"
+                    value={mercrediEnd}
+                    onChange={(e) => setMercrediEnd(e.target.value)}
+                  >
+                    {hourOptions}
+                  </select>
+                </div>
+                <div>
+                  <label>Status :</label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="mercrediStatus"
+                      value="open"
+                      checked={!mercrediClosed}
+                      onChange={() => setMercrediClosed(false)}
+                    />
+                    Ouvert
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="mercrediStatus"
+                      value="closed"
+                      checked={mercrediClosed}
+                      onChange={() => setMercrediClosed(true)}
+                    />
+                    Fermé
+                  </label>
+                </div>
+              </div>
+              {/* Jeudi */}
+              <div className="dayRow">
+                <h3>Jeudi</h3>
+                <div>
+                  <label htmlFor="jeudiStart">Début :</label>
+                  <select
+                    name="jeudiStart"
+                    value={jeudiStart}
+                    onChange={(e) => setJeudiStart(e.target.value)}
+                  >
+                    {hourOptions}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="jeudiEnd">Fin :</label>
+                  <select
+                    name="jeudiEnd"
+                    value={jeudiEnd}
+                    onChange={(e) => setJeudiEnd(e.target.value)}
+                  >
+                    {hourOptions}
+                  </select>
+                </div>
+                <div>
+                  <label>Status :</label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="jeudiStatus"
+                      value="open"
+                      checked={!jeudiClosed}
+                      onChange={() => setJeudiClosed(false)}
+                    />
+                    Ouvert
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="jeudiStatus"
+                      value="closed"
+                      checked={jeudiClosed}
+                      onChange={() => setJeudiClosed(true)}
+                    />
+                    Fermé
+                  </label>
+                </div>
+              </div>
+              {/* Vendredi */}
+              <div className="dayRow">
+                <h3>Vendredi</h3>
+                <div>
+                  <label htmlFor="vendrediStart">Début :</label>
+                  <select
+                    name="vendrediStart"
+                    value={vendrediStart}
+                    onChange={(e) => setVendrediStart(e.target.value)}
+                  >
+                    {hourOptions}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="vendrediEnd">Fin :</label>
+                  <select
+                    name="vendrediEnd"
+                    value={vendrediEnd}
+                    onChange={(e) => setVendrediEnd(e.target.value)}
+                  >
+                    {hourOptions}
+                  </select>
+                </div>
+                <div>
+                  <label>Status :</label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="vendrediStatus"
+                      value="open"
+                      checked={!vendrediClosed}
+                      onChange={() => setVendrediClosed(false)}
+                    />
+                    Ouvert
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="vendrediStatus"
+                      value="closed"
+                      checked={vendrediClosed}
+                      onChange={() => setVendrediClosed(true)}
+                    />
+                    Fermé
+                  </label>
+                </div>
+              </div>
+              {/* Samedi */}
+              <div className="dayRow">
+                <h3>Samedi</h3>
+                <div>
+                  <label htmlFor="samediStart">Début :</label>
+                  <select
+                    name="samediStart"
+                    value={samediStart}
+                    onChange={(e) => setSamediStart(e.target.value)}
+                  >
+                    {hourOptions}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="samediEnd">Fin :</label>
+                  <select
+                    name="samediEnd"
+                    value={samediEnd}
+                    onChange={(e) => setSamediEnd(e.target.value)}
+                  >
+                    {hourOptions}
+                  </select>
+                </div>
+                <div>
+                  <label>Status :</label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="samediStatus"
+                      value="open"
+                      checked={!samediClosed}
+                      onChange={() => setSamediClosed(false)}
+                    />
+                    Ouvert
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="samediStatus"
+                      value="closed"
+                      checked={samediClosed}
+                      onChange={() => setSamediClosed(true)}
+                    />
+                    Fermé
+                  </label>
+                </div>
+              </div>
+              {/* Dimanche */}
+              <div className="dayRow">
+                <h3>Dimanche</h3>
+                <div>
+                  <label htmlFor="dimancheStart">Début :</label>
+                  <select
+                    name="dimancheStart"
+                    value={dimancheStart}
+                    onChange={(e) => setDimancheStart(e.target.value)}
+                  >
+                    {hourOptions}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="dimancheEnd">Fin :</label>
+                  <select
+                    name="dimancheEnd"
+                    value={dimancheEnd}
+                    onChange={(e) => setDimancheEnd(e.target.value)}
+                  >
+                    {hourOptions}
+                  </select>
+                </div>
+                <div>
+                  <label>Status :</label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="dimancheStatus"
+                      value="open"
+                      checked={!dimancheClosed}
+                      onChange={() => setDimancheClosed(false)}
+                    />
+                    Ouvert
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="dimancheStatus"
+                      value="closed"
+                      checked={dimancheClosed}
+                      onChange={() => setDimancheClosed(true)}
+                    />
+                    Fermé
+                  </label>
+                </div>
+              </div>
+              <button type="button" onClick={handleEnregistrerHoraires}>
+                Enregistrer horaires de travail
+              </button>
+            </div>
+          ) : (
+            renderHoraires()
+          )}
+        </section>
+
+        <section>
+          <h2 className="titleAnnonce">Ajouter une activité</h2>
+          <button type="button" onClick={() => setDisplayAddActivity(true)}>
+            Ajouter une activité
+          </button>
+          {displayAddActivity && newAddActivityForm()}
+        </section>
+
+        {/* Affichage dynamique de toutes les activités enregistrées avec possibilité de modification */}
+        {activitiesList.length > 0 && (
+          <section className="allActivities">
+            <h2>Toutes les activités enregistrées</h2>
+            {activitiesList.map((activity, index) => (
+              <div key={index} className="activityItem">
+                {editingIndex === index ? (
+                  <div>
+                    <input
+                      type="text"
+                      value={editingName}
+                      onChange={(e) => setEditingName(e.target.value)}
+                    />
+                    <input
+                      type="text"
+                      value={editingDescription}
+                      onChange={(e) => setEditingDescription(e.target.value)}
+                    />
+                    <input
+                      type="text"
+                      value={editingDuration}
+                      onChange={(e) => setEditingDuration(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleSaveEditing(index)}
+                    >
+                      Enregistrer
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <p>
+                      {activity.name} - {activity.description} -{" "}
+                      {activity.duration}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => handleStartEditing(index)}
+                    >
+                      Modifier
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </section>
+        )}
+
+        <button type="submit" className="sendDataForm">
+          Poster mon annonce
+        </button>
+      </form>
+      {renderExistingActivities()}
+    </section>
   );
 };
 

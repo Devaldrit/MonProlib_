@@ -9,6 +9,12 @@ const ActiviteCard = ({ titre, description }) => {
         <span>-</span>
         <p className="descriptionAcitvity">{description}</p>
       </div>
+import "./activiteCard.css";
+
+const ActiviteCard = ({ name }) => {
+  return (
+    <div className="activityCard">
+      <p>{name}</p>
     </div>
   );
 };

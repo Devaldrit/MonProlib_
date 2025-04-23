@@ -10,6 +10,7 @@ function HeaderConnexion() {
   const buttonRef = useRef(null);
   const [prenom, setPrenom] = useState("");
   const [role, setRole] = useState("");
+  const id = localStorage.getItem("userId");
 
   useEffect(() => {
     const storedPrenom = localStorage.getItem("prenom");
@@ -112,7 +113,15 @@ function HeaderConnexion() {
               </div>
             </>
           ) : null}
-          <div className="dropdown_item">Paramètre</div>
+          <div
+            className="dropdown_item"
+            onClick={() => {
+              setMenuOpen(false);
+              navigate(`/settings_pro/${id}`);
+            }}
+          >
+            Paramètre
+          </div>
           <div className="dropdown_item_deconnexion" onClick={handleLogout}>
             Déconnexion
           </div>

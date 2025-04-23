@@ -11,6 +11,7 @@ import WelcomeUser from "./Pages/user/welcome_user/welcomeUser.jsx";
 import CalendarPro from "./Pages/pro/calendar_pro/calendarPro";
 import AnnoncePro from "./Pages/pro/annonce_pro/annoncePro.jsx";
 import MesRdv from "./Pages/pro/mesRdv_pro/mesRdv.jsx";
+import Settings from "./Pages/pro/Settings_pro/Settings.jsx";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/Login" element={<Login />} />
         <Route path="/welcome_pro/:id" element={<WelcomePro />} />
         <Route path="/welcome_user/:id" element={<WelcomeUser />} />
+        <Route path="/settings_pro/:id" element={<Settings />} />
       </Routes>
     </Router>
   );
