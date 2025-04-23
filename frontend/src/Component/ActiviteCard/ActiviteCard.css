@@ -1,16 +1,9 @@
-.top {
-  display: flex;
-}
-span {
-  padding: 26px;
-  font-size: 30px;
-}
-.titleActivity {
-  color: black;
-}
-.descriptionAcitvity {
-  color: black;
-}
-.durationActivity {
-  color: black;
+.activityCard {
+  background-color: rgb(32, 118, 171);
+  margin: 5px;
+  padding: 5px;
+  border-radius: 10px;
+  border: solid #2440a9;
+  width: 250px;
+  text-align: center;
 }
