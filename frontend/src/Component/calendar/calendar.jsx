@@ -10,7 +10,6 @@ const Calendar = () => {
   const [selectedSlotTime, setSelectedSlotTime] = useState(null);
 
   useEffect(() => {
-    
     fetchSlots();
   }, [currentDate]);
 
@@ -99,7 +98,7 @@ const Calendar = () => {
         start: selectedSlotTime,
         end: new Date(selectedSlotTime.getTime() + 60 * 60 * 1000),
         title,
-        description
+        description,
       }),
     });
     closePopup();
@@ -138,14 +137,14 @@ const Calendar = () => {
             >
               {slot && (
                 <div className="slot-info">
-                  <span>
+                  <span className="spanCalendar">
                     {new Date(slot.start).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
                   </span>
-                  <span>{slot.title}</span>
-                  <span>{slot.description}</span>
+                  <span className="spanCalendar">{slot.title}</span>
+                  <span className="spanCalendar">{slot.description}</span>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();

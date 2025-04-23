@@ -102,7 +102,15 @@ function HeaderConnexion() {
               >
                 Définir Mes Heures
               </div>
-              <div className="dropdown_item">Mes Rendez-Vous</div>
+              <div
+                className="dropdown_item"
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate("/mesRdv_Pro");
+                }}
+              >
+                Mes Rendez-Vous
+              </div>
             </>
           ) : null}
           <div

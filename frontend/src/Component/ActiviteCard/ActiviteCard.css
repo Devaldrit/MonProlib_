@@ -1,0 +1,16 @@
+.top {
+  display: flex;
+}
+span {
+  padding: 26px;
+  font-size: 30px;
+}
+.titleActivity {
+  color: black;
+}
+.descriptionAcitvity {
+  color: black;
+}
+.durationActivity {
+  color: black;
+}
